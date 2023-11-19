@@ -12,3 +12,5 @@ typedef struct {
     size_t total_size;
     allocation_t *head;
 } mymemory_t
+
+myMemory_t* myMemory_init(size_t size);
