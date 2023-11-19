@@ -1,0 +1,9 @@
+{
+    "C_Cpp.errorSquiggles": "disabled",
+    "files.associations": {
+        "mymemory.h": "c",
+        "list.h": "c",
+        "stdlib.h": "c",
+        "stdio.h": "c"
+    }
+}
