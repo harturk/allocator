@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include "list.h"
 #include "mymemory.h"
+#include "list.c"
 #include "mymemory.c"
 
 int main() {
@@ -8,12 +11,26 @@ int main() {
     int size = 200;
     mymemory_t *static_pool = mymemory_init(200);
     allocation_t *block = mymemory_alloc(static_pool, 2 * sizeof(int));
+    printf("AAAAAAAAAAAAAAAA %p\n", block);
+    
+    struct list_s *lst;
+	struct node_s *node;
+
+    free_block *a1 = malloc(sizeof(free_block));
+    free_block *a2 = malloc(sizeof(free_block));
+    a1->start = static_pool->pool;
+    a1->size = 200;
+    a1->end = static_pool->pool + 200;
+	
+	lst = list_create();
+    node = list_push(lst, (void*)a1);
 
     printf("inicio do pool: %p\n", static_pool->pool);
     printf("fim do pool: %p\n", size + static_pool->pool);
+    a2 = (void*)node->data;
 
-    printf("inicio do pool: %p\n", block);
-    printf("fim do pool: %p\n", 2 * sizeof(int) + block);
+    printf("teste: %p\n", a2->start);
+    printf("teste: %d\n", a2->size);
 
     return 0;
 }

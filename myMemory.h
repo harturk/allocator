@@ -2,6 +2,7 @@
 #define ALLOCATOR_H
 
 #include <stdlib.h>
+#include "list.h"
 
 // Estrutura de alocação, onde indica o ínicio do ponteiro da estrutura alocada, tamanho de sua alocação
 // e um ponteiro para a próxima estrutura alocada. REPRESENTAÇÃO DO BLOCO DE MEMÓRIA
@@ -19,8 +20,23 @@ typedef struct {
     allocation_t* head;
 } mymemory_t;
 
+typedef struct {
+    void* start;
+    void* end;
+    size_t size;
+} free_block;
+
+// Atualiza lista de blocos livres
+void update_list(free_block *block, size_t size);
+
 // Aloca o bloco de memória total e retorna um ponteiro para ele
 mymemory_t* mymemory_init(size_t size);
+
+// Procura pelo bloco livre mais próximo do tamanho especificado
+struct node_s *find_next_free_block(size_t size);
+
+// Aloca um bloco de memória de tamanho especificado
+allocation_t *allocate_block(mymemory_t *pool, size_t size);
 
 // Tenta alocar um bloco de mem´oria de tamanho especificado. Se a alocação for bem-sucedida, 
 // retorna um ponteiro para o in´ıcio do bloco. Caso contrário, retorna NULL.
