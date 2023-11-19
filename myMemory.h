@@ -1,3 +1,8 @@
+#ifndef ALLOCATOR_H
+#define ALLOCATOR_H
+
+#include <stdlib.h>
+
 // Estrutura de alocação, onde indica o ínicio do ponteiro da estrutura alocada, tamanho de sua alocação
 // e um ponteiro para a próxima estrutura alocada.
 typedef struct allocation {
@@ -37,3 +42,5 @@ void mymemory stats(mymemory t *memory);
 
 // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
 void mymemory cleanup(mymemory t *memory);
+
+#endif
