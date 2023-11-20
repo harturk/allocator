@@ -27,7 +27,7 @@ typedef struct {
 } free_block;
 
 // Atualiza lista de blocos livres
-void update_list(free_block *block, size_t size);
+void update_list(struct node_s *node_block, size_t size);
 
 // Aloca o bloco de memória total e retorna um ponteiro para ele
 mymemory_t* mymemory_init(size_t size);
@@ -35,12 +35,9 @@ mymemory_t* mymemory_init(size_t size);
 // Procura pelo bloco livre mais próximo do tamanho especificado
 struct node_s *find_next_free_block(size_t size);
 
-// Aloca um bloco de memória de tamanho especificado
-allocation_t *allocate_block(mymemory_t *pool, size_t size);
-
-// Tenta alocar um bloco de mem´oria de tamanho especificado. Se a alocação for bem-sucedida, 
-// retorna um ponteiro para o in´ıcio do bloco. Caso contrário, retorna NULL.
-// void* mymemory alloc(mymemory t *memory, size t size);
+// Tenta alocar um bloco de memória de tamanho especificado. Se a alocação for bem-sucedida, 
+// retorna um ponteiro para o início do bloco. Caso contrário, retorna NULL.
+void* mymemory_alloc(mymemory_t *memory, size_t size);
 
 // // Libera a alocação apontada por ptr. Se ptr não for uma alocação válida, a função
 // // não deve fazer nada.
@@ -54,7 +51,7 @@ allocation_t *allocate_block(mymemory_t *pool, size_t size);
 // //      – Memória total alocada (em bytes)
 // //      – Memória total livre (em bytes)
 // //      – O maior bloco contíguo de memória livre
-// //      – Número de fragmentos de mem´oria livre (ou seja, blocos de memória entre alocações)
+// //      – Número de fragmentos de memória livre (ou seja, blocos de memória entre alocações)
 // void mymemory stats(mymemory t *memory);
 
 // // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)

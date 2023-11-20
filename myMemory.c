@@ -41,14 +41,7 @@ struct node_s *find_next_free_block(size_t size)
     current_node = list_index(lst, 0);
     free_block *current_block = malloc(sizeof(free_block));
     current_block = (void *)current_node->data;
-    printf("1\n");
-    printf("%p\n", current_node);
-    printf("%p\n", current_block);
-    printf("2\n");
-    printf("%d\n", current_block->size);
-    printf("3\n");
     current_size = current_block->size;
-    printf("4\n");
     if (current_size > size)
     {
         closest_node = current_node;
@@ -82,15 +75,15 @@ struct node_s *find_next_free_block(size_t size)
     return closest_node;
 }
 
-allocation_t *allocate_block(mymemory_t *pool, size_t size)
+void *mymemory_alloc(mymemory_t *memory, size_t size)
 {
-    if (size > pool->total_size)
+    if (size > memory->total_size)
     {
         printf("Tamanho do bloco maior que o tamanho total do pool\n");
         return NULL;
     }
     allocation_t *allocation_block = malloc(sizeof(allocation_t));
-    if (block == NULL)
+    if (allocation_block == NULL)
     {
         printf("Erro ao alocar bloco\n");
         return NULL;
@@ -113,9 +106,18 @@ allocation_t *allocate_block(mymemory_t *pool, size_t size)
     allocation_block->size = size;
     allocation_block->next = NULL;
     // Insere no head caso ainda não tenha sido alocado algum bloco
-    if (pool->head == NULL)
+    if (memory->head == NULL)
     {
-        pool->head = allocation_block;
+        memory->head = allocation_block;
+    } else {
+        // Aloca o bloco no final da pool
+        allocation_t *current_block = malloc(sizeof(allocation_t));
+        current_block = memory->head;
+        while (current_block->next != NULL)
+        {
+            current_block = current_block->next;
+        }
+        current_block->next = allocation_block;
     }
     printf("Block Criado no endereco %p\n", allocation_block);
     return allocation_block;
@@ -146,16 +148,16 @@ mymemory_t *mymemory_init(size_t size)
     return p;
 }
 
-void *mymemory_alloc(mymemory_t *pool, size_t size)
-{
-    // Inicializa, caso não tenha sido inicializado ainda.
-    if (pool == NULL)
-    {
-        const int POOL_DEFAULT = 1024;
-        printf("pool == NULL, Inicializando pool com valor DEFAULT de %d\n", POOL_DEFAULT);
-        pool = mymemory_init(size);
-    }
+// void *mymemory_alloc(mymemory_t *pool, size_t size)
+// {
+//     // Inicializa, caso não tenha sido inicializado ainda.
+//     if (pool == NULL)
+//     {
+//         const int POOL_DEFAULT = 1024;
+//         printf("pool == NULL, Inicializando pool com valor DEFAULT de %d\n", POOL_DEFAULT);
+//         pool = mymemory_init(size);
+//     }
 
-    // FIRST FIT
-    return allocate_block(pool, size);
-}
+//     // BEST FIT
+//     return mymemory_alloc_block(pool, size);
+// }
