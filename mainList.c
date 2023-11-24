@@ -39,7 +39,7 @@ struct node_s *findfunc(struct node_s *node, void *arg)
 		return 0;
 }
 
-int run(void)
+int main(void)
 {
 	struct list_s *lst;
 	struct node_s *node;

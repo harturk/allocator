@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -Wall -O2
 
 PROG = main
-SOURCES = main.c list.c mymemory.c mainList.c
+SOURCES = main.c list.c mymemory.c
 OBJECTS = $(SOURCES: .c=.o)
 
 
