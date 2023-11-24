@@ -41,7 +41,7 @@ void* mymemory_alloc(mymemory_t *memory, size_t size);
 
 // Libera a alocação apontada por ptr. Se ptr não for uma alocação válida, a função
 // não deve fazer nada.
-// void mymemory free(mymemory t *memory, void *ptr);
+// void mymemory_free(mymemory_t *memory, void *ptr);
 
 // Exibe todas as alocações atuais, incluindo o início e o tamanho de cada alocação
 void mymemory_display(mymemory_t *memory);
@@ -55,6 +55,6 @@ void mymemory_display(mymemory_t *memory);
 void mymemory_stats(mymemory_t *memory);
 
 // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
-// void mymemory cleanup(mymemory t *memory);
+// void mymemory_cleanup(mymemory_t *memory);
 
 #endif
