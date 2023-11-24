@@ -10,7 +10,13 @@ void update_list(struct node_s *node_block, size_t size)
     free_block *block = (void *)node_block->data;
     block->size = block->size - size;
     block->start = block->start + size + 1;
-    printf("Bloco atualizado no endereço %p ---- Tamanho %d\n", block, block->size);
+    if (block->start == block->end) {
+        // printf("Bloco remanescente tem tamanho 0. Removendo-o da memória\n");
+        free(node_block->data);
+        free(node_block);
+    } else {
+        // printf("Bloco vazio atualizado no endereço %p ---- Tamanho %d\n", block, block->size);
+    }
 }
 
 struct node_s *find_next_free_block(size_t size)
@@ -18,17 +24,17 @@ struct node_s *find_next_free_block(size_t size)
     // Percorre a lista de blocos livres
     if (lst == NULL || lst->head == NULL)
     {
-        printf("Lista de blocos livres vazia\n");
+        // printf("Lista de blocos livres vazia\n");
         return NULL;
     }
-    printf("Procurando bloco livre\n");
+    // printf("Procurando bloco livre\n");
     size_t current_size;
     size_t closest_size;
     free_block *closest_block;
     struct node_s *current_node;
     struct node_s *closest_node;
-    printf("Alocando blocos auxiliares\n");
 
+    // printf("Alocando blocos auxiliares\n");
     current_node = list_index(lst, 0);
     free_block *current_block = (void *)current_node->data;
     current_size = current_block->size;
@@ -38,7 +44,7 @@ struct node_s *find_next_free_block(size_t size)
         closest_block = current_block;
         closest_size = current_size;
     }
-    printf("Testando tamanhos iniciais\n");
+    // printf("Testando tamanhos iniciais\n");
 
     // Procura pelo bloco livre mais próximo do tamanho especificado
     while (current_node->next != NULL)
@@ -58,7 +64,7 @@ struct node_s *find_next_free_block(size_t size)
     }
     if (closest_block == NULL)
     {
-        printf("Nenhum bloco adequado foi encontrado\n");
+        // printf("Nenhum bloco adequado foi encontrado\n");
         return NULL;
     }
     printf("Bloco mais proximo encontrado no endereço %p ---- Tamanho %d\n", closest_block, closest_block->size);
@@ -91,7 +97,7 @@ void *mymemory_alloc(mymemory_t *memory, size_t size)
 
     printf("Criados blocos auxiliares\n");
 
-    allocation_block->start = next_block;
+    allocation_block->start = next_block->start;
     allocation_block->size = size;
     allocation_block->next = NULL;
     update_list(next_node, size);
@@ -133,6 +139,42 @@ mymemory_t *mymemory_init(size_t size)
     return p;
 }
 
+void mymemory_free(mymemory_t *memory, void *ptr)
+{
+    // Libera a alocação apontada por ptr. Se ptr não for uma alocação válida, a função
+    // não deve fazer nada.
+    allocation_t *current_block = memory->head;
+    allocation_t *previous_block = NULL;
+    while (current_block != NULL)
+    {
+        // Será limpado o bloco que contém o ponteiro dentro do seu intervalo de memória
+        if (ptr >= current_block->start && ptr <= current_block->start + current_block->size )
+        {
+            // Se for o primeiro bloco, atualiza o head
+            if (previous_block == NULL)
+            {
+                memory->head = current_block->next;
+            }
+            else
+            {
+                previous_block->next = current_block->next;
+            }
+            // Insere o bloco na lista de blocos livres
+            free_block *new_block = malloc(sizeof(free_block));
+            new_block->start = current_block->start;
+            new_block->size = current_block->size;
+            new_block->end = current_block->start + current_block->size;
+            lst = list_pushback(lst, (void *)new_block);
+            // Libera o bloco
+            free(current_block);
+            return;
+        }
+        previous_block = current_block;
+        current_block = current_block->next;
+    }
+    printf("Nenhuma alocação encontrada\n");
+}
+
 void mymemory_display(mymemory_t *memory)
 {
     if (memory->head == NULL)
@@ -146,6 +188,17 @@ void mymemory_display(mymemory_t *memory)
     {
         printf("Bloco no endereco %p - %p ---- Tamanho %d\n", current_block->start, current_block->start + current_block->size, current_block->size);
         current_block = current_block->next;
+    }
+}
+
+void free_block_display() {
+    struct node_s *current_node = list_index(lst, 0);
+    free_block *current_free_block = (void *)current_node->data;
+    while (current_node->next != NULL)
+    {
+        current_free_block = (void *)current_node->data;
+        printf("Bloco livre no endereco %p - %p ---- Tamanho %d\n", current_free_block->start, current_free_block->end, current_free_block->size);
+        current_node = current_node->next;
     }
 }
 
