@@ -3,8 +3,8 @@ CFLAGS = -Wall -O2
 
 all: main
 
-main: main.o list.o mymemory.o
-	$(CC) $(CFLAGS) -o main main.o list.o mymemory.o
+main: main.o list.o mymemory.o mainlist.o 
+	$(CC) $(CFLAGS) -o main main.o list.o mymemory.o mainlist.o
 
 main.o: main.c
 	$(CC) $(CFLAGS) -c main.c
@@ -14,6 +14,10 @@ list.o: list.c
 
 mymemory.o: mymemory.c
 	$(CC) $(CFLAGS) -c mymemory.c
+
+mainlist.o: mainlist.c
+	$(CC) $(CFLAGS) -c mainlist.c
+
 
 clean:
 	rm -f *.o main
