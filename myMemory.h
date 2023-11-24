@@ -22,7 +22,6 @@ typedef struct {
 
 typedef struct {
     void* start;
-    void* end;
     size_t size;
 } free_block;
 
@@ -55,6 +54,6 @@ void mymemory_display(mymemory_t *memory);
 void mymemory_stats(mymemory_t *memory);
 
 // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
-// void mymemory_cleanup(mymemory_t *memory);
+void mymemory_cleanup(mymemory_t *memory);
 
 #endif

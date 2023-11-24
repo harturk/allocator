@@ -10,13 +10,6 @@ void update_list(struct node_s *node_block, size_t size)
     free_block *block = (void *)node_block->data;
     block->size = block->size - size;
     block->start = block->start + size + 1;
-    if (block->start == block->end) {
-        // printf("Bloco remanescente tem tamanho 0. Removendo-o da memória\n");
-        free(node_block->data);
-        free(node_block);
-    } else {
-        // printf("Bloco vazio atualizado no endereço %p ---- Tamanho %d\n", block, block->size);
-    }
 }
 
 struct node_s *find_next_free_block(size_t size)
@@ -67,7 +60,7 @@ struct node_s *find_next_free_block(size_t size)
         // printf("Nenhum bloco adequado foi encontrado\n");
         return NULL;
     }
-    printf("Bloco mais proximo encontrado no endereço %p ---- Tamanho %d\n", closest_block, closest_block->size);
+    printf("Bloco mais proximo encontrado no endereço %p ---- Tamanho %zu\n", closest_block, closest_block->size);
     return closest_node;
 }
 
@@ -127,10 +120,9 @@ mymemory_t *mymemory_init(size_t size)
     p->pool = malloc(size);
     p->total_size = size;
     p->head = NULL;
-    printf("Pool Criado no endereco %p --- Tamanho %d\n", p->pool, sizeof(size));
+    printf("Pool Criado no endereco %p --- Tamanho %zu\n", p->pool, sizeof(size));
     free_block *current_block = malloc(sizeof(free_block));
     current_block->start = p->pool;
-    current_block->end = p->pool + size;
     current_block->size = size;
 
     lst = list_create();
@@ -163,8 +155,7 @@ void mymemory_free(mymemory_t *memory, void *ptr)
             free_block *new_block = malloc(sizeof(free_block));
             new_block->start = current_block->start;
             new_block->size = current_block->size;
-            new_block->end = current_block->start + current_block->size;
-            lst = list_pushback(lst, (void *)new_block);
+            list_push(lst, (void *)new_block);
             // Libera o bloco
             free(current_block);
             return;
@@ -172,7 +163,45 @@ void mymemory_free(mymemory_t *memory, void *ptr)
         previous_block = current_block;
         current_block = current_block->next;
     }
-    printf("Nenhuma alocação encontrada\n");
+    printf("Nenhuma alocacao encontrada\n");
+}
+
+void mymemory_cleanup(mymemory_t *memory)
+{
+    // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
+    allocation_t *current_block = memory->head;
+    allocation_t *next_block = NULL;
+    while (current_block != NULL)
+    {
+        next_block = current_block->next;
+        free(current_block);
+        current_block = next_block;
+    }
+
+    // Fiquei na dúvida sobre a necessidade de atribuir NULL após executar o free
+    // porem, após testes, o programa devolvia outros enderecos de memória
+    // quando nao havia a atribuição de NULL
+    free(memory->pool);
+    memory->pool = NULL;
+    memory->head = NULL;
+    free(memory);
+    memory = NULL;
+
+    // Libera todos os blocos de memoria livre
+    struct node_s *current_node = list_index(lst, 0);
+    free_block *current_free_block = (void *)current_node->data;
+    while (current_node->next != NULL)
+    {
+        current_free_block = (void *)current_node->data;
+        free(current_free_block);
+        current_node = current_node->next;
+        free(current_node->prev);
+        current_node->prev = NULL;
+        printf("Bloco livre liberado\n");
+    }
+    free(lst);
+    lst = NULL;
+
 }
 
 void mymemory_display(mymemory_t *memory)
@@ -186,7 +215,7 @@ void mymemory_display(mymemory_t *memory)
     allocation_t *current_block = memory->head;
     while (current_block != NULL)
     {
-        printf("Bloco no endereco %p - %p ---- Tamanho %d\n", current_block->start, current_block->start + current_block->size, current_block->size);
+        printf("Bloco no endereco %p - %p ---- Tamanho %zu\n", current_block->start, current_block->start + current_block->size, current_block->size);
         current_block = current_block->next;
     }
 }
@@ -197,7 +226,7 @@ void free_block_display() {
     while (current_node->next != NULL)
     {
         current_free_block = (void *)current_node->data;
-        printf("Bloco livre no endereco %p - %p ---- Tamanho %d\n", current_free_block->start, current_free_block->end, current_free_block->size);
+        printf("Bloco livre no endereco %p ---- Tamanho %zu\n", current_free_block->start, current_free_block->size);
         current_node = current_node->next;
     }
 }
@@ -234,7 +263,7 @@ void mymemory_stats(mymemory_t *memory)
         total_free_blocks++;
         current_free_block = (void *)current_node->data;
         total_free_memory += current_free_block->size;
-        if (current_free_block->size > biggest_free_block)
+        if (current_free_block->size - biggest_free_block > 0)
         {
             biggest_free_block = current_free_block->size;
         }
