@@ -39,22 +39,22 @@ struct node_s *find_next_free_block(size_t size);
 // retorna um ponteiro para o início do bloco. Caso contrário, retorna NULL.
 void* mymemory_alloc(mymemory_t *memory, size_t size);
 
-// // Libera a alocação apontada por ptr. Se ptr não for uma alocação válida, a função
-// // não deve fazer nada.
+// Libera a alocação apontada por ptr. Se ptr não for uma alocação válida, a função
+// não deve fazer nada.
 // void mymemory free(mymemory t *memory, void *ptr);
 
-// // Exibe todas as alocações atuais, incluindo o início e o tamanho de cada alocação
-// void mymemory display(mymemory t *memory);
+// Exibe todas as alocações atuais, incluindo o início e o tamanho de cada alocação
+void mymemory_display(mymemory_t *memory);
 
-// // Exibe estatísticas gerais sobre a memória, incluindo:
-// //      – Número total de alocações
-// //      – Memória total alocada (em bytes)
-// //      – Memória total livre (em bytes)
-// //      – O maior bloco contíguo de memória livre
-// //      – Número de fragmentos de memória livre (ou seja, blocos de memória entre alocações)
-// void mymemory stats(mymemory t *memory);
+// Exibe estatísticas gerais sobre a memória, incluindo:
+//      – Número total de alocações
+//      – Memória total alocada (em bytes)
+//      – Memória total livre (em bytes)
+//      – O maior bloco contíguo de memória livre
+//      – Número de fragmentos de memória livre (ou seja, blocos de memória entre alocações)
+void mymemory_stats(mymemory_t *memory);
 
-// // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
+// Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
 // void mymemory cleanup(mymemory t *memory);
 
 #endif
