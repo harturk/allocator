@@ -12,7 +12,6 @@ typedef struct allocation {
     struct allocation* next;
 } allocation_t;
 
-
 // Essa estrutura está referenciando referências para o armazenamento total. REPRESENTAÇÃO DA POOL DE MEMÓRIA
 typedef struct {
     void* pool;

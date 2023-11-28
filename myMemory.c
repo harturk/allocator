@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "mymemory.h"
 #include "list.h"
+#include <string.h>
 
 static struct list_s *lst;
 
@@ -151,6 +152,7 @@ void mymemory_free(mymemory_t *memory, void *ptr)
             {
                 previous_block->next = current_block->next;
             }
+            memset(current_block->start, 0, current_block->size);
             // Insere o bloco na lista de blocos livres
             free_block *new_block = malloc(sizeof(free_block));
             new_block->start = current_block->start;
@@ -174,16 +176,18 @@ void mymemory_cleanup(mymemory_t *memory)
     while (current_block != NULL)
     {
         next_block = current_block->next;
-        free(current_block);
+        mymemory_free(memory, current_block->start);
+        // free(current_block);
         current_block = next_block;
     }
 
     // Fiquei na dúvida sobre a necessidade de atribuir NULL após executar o free
     // porem, após testes, o programa devolvia outros enderecos de memória
     // quando nao havia a atribuição de NULL
+    memset(memory->pool, 0, memory->total_size);
+    // memory->pool = NULL;
+    // memory->head = NULL;
     free(memory->pool);
-    memory->pool = NULL;
-    memory->head = NULL;
     free(memory);
     memory = NULL;
 
@@ -199,13 +203,15 @@ void mymemory_cleanup(mymemory_t *memory)
         current_node->prev = NULL;
         printf("Bloco livre liberado\n");
     }
+    current_node = NULL;
     free(lst);
     lst = NULL;
-
 }
 
 void mymemory_display(mymemory_t *memory)
 {
+    printf("\n");
+    printf("------------------- Informacoes sobre a memoria -------------------\n");
     if (memory->head == NULL)
     {
         printf("Nenhum bloco alocado\n");
@@ -221,6 +227,8 @@ void mymemory_display(mymemory_t *memory)
 }
 
 void free_block_display() {
+    printf("\n");
+    printf("------------------- Informacoes sobre os blocos livres -------------------\n");
     struct node_s *current_node = list_index(lst, 0);
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
@@ -239,11 +247,14 @@ void free_block_display() {
 //      – Número de fragmentos de memória livre (ou seja, blocos de memória entre alocações)
 void mymemory_stats(mymemory_t *memory)
 {
-    if (memory->head == NULL)
+    printf("\n");
+    printf("------------------- Informações sobre estatisticas da memoria -------------------\n");
+    if (memory == NULL || memory->head == NULL)
     {
         printf("Nenhum bloco alocado\n");
         return;
     }
+    printf("1");
     allocation_t *current_block = memory->head;
     int total_allocations = 0;
     int total_allocated_memory = 0;
@@ -256,7 +267,14 @@ void mymemory_stats(mymemory_t *memory)
         total_allocated_memory += current_block->size;
         current_block = current_block->next;
     }
+    printf("2");
     struct node_s *current_node = list_index(lst, 0);
+        if (current_node == NULL)
+    {
+        printf("Nenhum bloco alocado\n");
+        return;
+    }
+    printf("3");
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
     {
