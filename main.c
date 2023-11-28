@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include "list.h"
 #include "mymemory.h"
-// #include "list.c" <- Nao precisa incluir, pois ja esta incluido no list.h (bad practice)
-// #include "mymemory.c" <- Nao precisa incluir, pois ja esta incluido no mymemory.h (bad practice)
+// #include "list.c"
+// #include "mymemory.c"
 
 int main()
 {

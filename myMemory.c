@@ -14,21 +14,21 @@ void update_list(struct node_s *node_block, size_t size)
 
 struct node_s *find_next_free_block(size_t size)
 {
+    struct node_s *current_node;
+    current_node = list_index(lst, 0);
     // Percorre a lista de blocos livres
-    if (lst == NULL || lst->head == NULL)
+    if (current_node == NULL)
     {
         // printf("Lista de blocos livres vazia\n");
         return NULL;
     }
     // printf("Procurando bloco livre\n");
     size_t current_size;
-    size_t closest_size;
+    size_t closest_size = 0;
     free_block *closest_block;
-    struct node_s *current_node;
-    struct node_s *closest_node;
+    struct node_s *closest_node = NULL;
 
     // printf("Alocando blocos auxiliares\n");
-    current_node = list_index(lst, 0);
     free_block *current_block = (void *)current_node->data;
     current_size = current_block->size;
     if (current_size > size)
@@ -52,15 +52,15 @@ struct node_s *find_next_free_block(size_t size)
         {
             closest_block = current_block;
             closest_size = current_size;
+            closest_node = current_node;
         }
         current_node = current_node->next;
     }
-    if (closest_block == NULL)
+    if (closest_block == NULL || closest_node == NULL)
     {
-        // printf("Nenhum bloco adequado foi encontrado\n");
         return NULL;
     }
-    printf("Bloco mais proximo encontrado no endereço %p ---- Tamanho %zu\n", closest_block, closest_block->size);
+    printf("Bloco mais proximo encontrado no endereco %p ---- Tamanho %zu\n", closest_block, closest_block->size);
     return closest_node;
 }
 

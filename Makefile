@@ -10,7 +10,6 @@ $(PROG): $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 
 
-// remove command based on OS
 ifdef OS
    RM = -del
 else
