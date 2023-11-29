@@ -28,7 +28,6 @@ struct node_s *find_next_free_block(size_t size)
     size_t closest_size = 0;
     free_block *closest_block;
     struct node_s *closest_node = NULL;
-
     // printf("Alocando blocos auxiliares\n");
     free_block *current_block = (void *)current_node->data;
     current_size = current_block->size;
@@ -39,7 +38,6 @@ struct node_s *find_next_free_block(size_t size)
         closest_size = current_size;
     }
     // printf("Testando tamanhos iniciais\n");
-
     // Procura pelo bloco livre mais próximo do tamanho especificado
     while (current_node->next != NULL)
     {
@@ -49,7 +47,7 @@ struct node_s *find_next_free_block(size_t size)
         // Best-Fit
         // Se o tamanho atual for menor que o tamanho mais próximo (iterado anteriormente) e
         // e maior que o tamanho desejado, atualiza o bloco mais próximo
-        if (size < current_size && current_size < closest_size)
+        if (size <= current_size && current_size < closest_size)
         {
             closest_block = current_block;
             closest_size = current_size;
@@ -61,7 +59,6 @@ struct node_s *find_next_free_block(size_t size)
     {
         return NULL;
     }
-    printf("Bloco mais proximo encontrado no endereco %p ---- Tamanho %zu\n", closest_block, closest_block->size);
     return closest_node;
 }
 
@@ -157,7 +154,7 @@ void mymemory_free(mymemory_t *memory, void *ptr)
             free_block *new_block = malloc(sizeof(free_block));
             new_block->start = current_block->start;
             new_block->size = current_block->size;
-            list_push(lst, (void *)new_block);
+            list_pushback(lst, (void *)new_block);
             // Libera o bloco
             free(current_block);
             return;
@@ -197,9 +194,10 @@ void mymemory_cleanup(mymemory_t *memory)
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
     {
-        printf("nodo atual %p\n", current_node);
         current_node = current_node->next;
         list_remove(lst, current_node->prev);
+        free(current_free_block);
+        current_free_block = (void *)current_node->data;
 
     }
     list_remove(lst, current_node);

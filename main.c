@@ -25,6 +25,12 @@ int main() {
     }
     d[block4->size] = '\0';
 
+    mymemory_free(pool, block4->start);
+    block4 = mymemory_alloc(pool, 8 * sizeof(char));
+    for (int i = 0; i < block4->size; i++) {
+        printf("%c", d[i]);
+    }
+
     printf("\n");
     printf("------------------- Memoria -------------------\n");
     mymemory_display(pool);
