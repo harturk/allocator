@@ -170,6 +170,7 @@ void mymemory_free(mymemory_t *memory, void *ptr)
 
 void mymemory_cleanup(mymemory_t *memory)
 {
+    printf(" --------------------- LIMPEZA TOTAL ------------------\n");
     // Libera todos os recursos (incluindo todas as alocações e o bloco de memória total)
     allocation_t *current_block = memory->head;
     allocation_t *next_block = NULL;
@@ -190,22 +191,19 @@ void mymemory_cleanup(mymemory_t *memory)
     free(memory->pool);
     free(memory);
     memory = NULL;
-
     // Libera todos os blocos de memoria livre
+    // list_destroy(lst);
     struct node_s *current_node = list_index(lst, 0);
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
     {
-        current_free_block = (void *)current_node->data;
-        free(current_free_block);
+        printf("nodo atual %p\n", current_node);
         current_node = current_node->next;
-        free(current_node->prev);
-        current_node->prev = NULL;
-        printf("Bloco livre liberado\n");
+        list_remove(lst, current_node->prev);
+
     }
-    current_node = NULL;
-    free(lst);
-    lst = NULL;
+    list_remove(lst, current_node);
+    list_pop(lst);
 }
 
 void mymemory_display(mymemory_t *memory)
@@ -229,6 +227,11 @@ void mymemory_display(mymemory_t *memory)
 void free_block_display() {
     printf("\n");
     printf("------------------- Informacoes sobre os blocos livres -------------------\n");
+    if (lst->length == 0)
+    {
+        printf("Nenhum bloco livre\n");
+        return;
+    }
     struct node_s *current_node = list_index(lst, 0);
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
@@ -254,7 +257,6 @@ void mymemory_stats(mymemory_t *memory)
         printf("Nenhum bloco alocado\n");
         return;
     }
-    printf("1");
     allocation_t *current_block = memory->head;
     int total_allocations = 0;
     int total_allocated_memory = 0;
@@ -267,14 +269,12 @@ void mymemory_stats(mymemory_t *memory)
         total_allocated_memory += current_block->size;
         current_block = current_block->next;
     }
-    printf("2");
     struct node_s *current_node = list_index(lst, 0);
         if (current_node == NULL)
     {
         printf("Nenhum bloco alocado\n");
         return;
     }
-    printf("3");
     free_block *current_free_block = (void *)current_node->data;
     while (current_node->next != NULL)
     {
