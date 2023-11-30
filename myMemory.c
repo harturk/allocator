@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "mymemory.h"
+#include "myMemory.h"
 #include "list.h"
 #include <string.h>
 

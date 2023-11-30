@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
-#include "mymemory.h"
+#include "myMemory.h"
 // #include "list.c"
 // #include "mymemory.c"
 
