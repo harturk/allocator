@@ -1,3 +1,6 @@
+// Hártur e Roberto
+// Best fit para alocacao
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "list.h"
